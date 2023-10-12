@@ -30,6 +30,10 @@ class SendEmails extends Command
      */
     public function handle()
     {
+        $response = Http::get('https://ascent-formation.fr/wp-json/wp/v2/lp_course/');
+        foreach (json_decode($response->body()) as $item) {
+        }
+
 
 
         $graphQLquery = '{"query": "query{ programs { id }}"}';
