@@ -30,7 +30,7 @@ class SendEmails extends Command
      */
     public function handle()
     {
-        $response = Http::get('https://ascent-formation.fr/wp-json/wp/v2/lp_course/');
+        $response = Http::get('https://ascent-formation.fr/wp-json/wp/v2/lp_course/?per_page=1000');
         foreach (json_decode($response->body()) as $item) {
             Formation::where('internal_id', $item->acf->digiforma_id)
                 ->update(['in_wordpress' => true]);
