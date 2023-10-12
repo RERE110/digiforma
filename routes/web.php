@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Formation;
 use Illuminate\Support\Facades\Route;
 use GuzzleHttp\Client;
 use Spatie\WebhookServer\WebhookCall;
@@ -22,9 +23,11 @@ header('Content-Type: application/json; charset=utf-8');
 
 Route::get('/', function () {
 
-    $response = Http::get('https://ascent-formation.fr/wp-json/wp/v2/lp_course/');
+    $response = Http::get('https://ascent-formation.fr/wp-json/wp/v2/lp_course/?per_page=100&page=1');
     foreach (json_decode($response->body()) as $item) {
         return $item->acf->digiforma_id;
+        Formation::where('internal_id', $item->acf->digiforma_id)
+            ->update(['in_wordpress' => true]);
     }
 
 
