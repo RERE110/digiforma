@@ -15,6 +15,7 @@ class Formation extends Model
      * @var array
      */
     protected $fillable = [
-        'internal_id'
+        'internal_id',
+        'in_wordpress'
     ];
 }

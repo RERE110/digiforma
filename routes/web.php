@@ -24,7 +24,7 @@ Route::get('/', function () {
 
     $response = Http::get('https://ascent-formation.fr/wp-json/wp/v2/lp_course/');
     foreach (json_decode($response->body()) as $item) {
-        return $item['acf']['digiforma'];
+        return $item->acf->digiforma_id;
     }
 
 
