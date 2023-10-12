@@ -30,27 +30,23 @@ class SendEmails extends Command
      */
     public function handle()
     {
-        $response = Http::get('https://ascent-formation.fr/wp-json/wp/v2/lp_course/?per_page=100&page=1');
-        foreach (json_decode($response->body()) as $item) {
-            Formation::where('internal_id', $item->acf->digiforma_id)
-                ->update(['in_wordpress' => true]);
-        }
-        $response = Http::get('https://ascent-formation.fr/wp-json/wp/v2/lp_course/?per_page=100&page=2');
-        foreach (json_decode($response->body()) as $item) {
-            Formation::where('internal_id', $item->acf->digiforma_id)
-                ->update(['in_wordpress' => true]);
-        }
-        $response = Http::get('https://ascent-formation.fr/wp-json/wp/v2/lp_course/?per_page=100&page=3');
-        foreach (json_decode($response->body()) as $item) {
-            Formation::where('internal_id', $item->acf->digiforma_id)
-                ->update(['in_wordpress' => true]);
-        }
-        $response = Http::get('https://ascent-formation.fr/wp-json/wp/v2/lp_course/?per_page=100&page=4');
-        foreach (json_decode($response->body()) as $item) {
-            Formation::where('internal_id', $item->acf->digiforma_id)
-                ->update(['in_wordpress' => true]);
-        }
+        $formations = Formation::all();
 
+        foreach ($formations as $formation)
+        {
+            sleep(5);
+            $id = $formation->internal_id;
+            $graphQLqueryProgram = '{"query": "query{ program(id:'.$id.') {id name description costsInter{cost} goals {text} category{name} durationInHours steps{text substeps{text}} image{url}}} "}';
+            $response = Http::withBody(
+                $graphQLqueryProgram
+            )->withHeaders([
+              'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAwNjgsInR5cGUiOiJ1c2VyIiwibW9kZSI6ImFwaSIsImV4cCI6MjAxMTA3NjczMSwiaXNzIjoiRGlnaWZvcm1hIn0.jOrnMIf8ZpodiPF9QYChLbEuldW4AiJTMwaCi2gfnMc',
+                'X-Second' => 'bar'
+            ])->post('https://app.digiforma.com/api/v1/graphql/');
+            $send = Http::withBody(
+                $response->getBody()->getContents()
+            )->post('https://ascent-formation.fr/wp-json/uap/v2/uap-6087-6088');
+        }
 
         //$graphQLquery = '{"query": "query{ programs { id }}"}';
         //$response = Http::withBody(
