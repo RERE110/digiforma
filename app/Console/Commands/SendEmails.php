@@ -30,7 +30,7 @@ class SendEmails extends Command
      */
     public function handle()
     {
-        $formations = Formation::all();
+        $formations = Formation::where('in_wordpress','=',0)->get();
 
         foreach ($formations as $formation)
         {
